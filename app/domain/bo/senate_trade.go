@@ -16,8 +16,7 @@ type TradeEntry struct {
 	Ticker          string
 	TransactionDate time.Time
 	TransactionType TradeType
-	SharesLow       int
-	SharesHigh      int
+	Shares          int
 	PricePerShare   float32
 }
 

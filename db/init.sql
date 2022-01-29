@@ -4,9 +4,8 @@ CREATE TABLE trades (
     shill_name TEXT NOT NULL,
     ticker TEXT NOT NULL,
     transaction_date DATE NOT NULL,
-    transaction_type TEXT NOT NULL,
-    shares_low INT NOT NULL,
-    shares_high INT NOT NULL,
+    transaction_type INT NOT NULL,
+    shares INT NOT NULL,
     price_per_share MONEY NOT NULL
 );
 
