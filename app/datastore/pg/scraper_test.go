@@ -12,6 +12,10 @@ import (
 
 // Ω
 
+var _ = AfterSuite(func() {
+	Ω(pg.ClearAll()).ShouldNot(HaveOccurred())
+})
+
 var _ = Describe("Scraper", func() {
 	BeforeEach(func() {
 		Ω(pg.ClearAll()).ShouldNot(HaveOccurred())
@@ -41,6 +45,9 @@ var _ = Describe("Scraper", func() {
 			}
 			err := pg.GetScraperRepo().BulkInsert(context.Background(), trades)
 			Ω(err).ShouldNot(HaveOccurred())
+			entries, err := pg.GetScraperRepo().GetTradesByShill(context.Background(), "BTS Jung Kook")
+			Ω(err).ShouldNot(HaveOccurred())
+			Ω(entries).Should(HaveLen(2))
 		})
 	})
 })

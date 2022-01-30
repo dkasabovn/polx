@@ -7,4 +7,5 @@ import (
 
 type ScraperRepo interface {
 	BulkInsert(ctx context.Context, entries []bo.TradeEntry) error
+	GetTradesByShill(ctx context.Context, shillName string) ([]bo.TradeEntry, error)
 }

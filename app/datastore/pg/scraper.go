@@ -72,7 +72,6 @@ func (s *scraperRepo) GetTradesByShill(ctx context.Context, shillName string) ([
 			&trade.Ticker,
 			&trade.TransactionDate,
 			&trade.TransactionType,
-			&trade.TransactionType,
 			&trade.Shares,
 			&trade.PricePerShare,
 		); err != nil {
