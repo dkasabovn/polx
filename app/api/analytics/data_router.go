@@ -17,5 +17,5 @@ func routerShillAutocomplete(g *echo.Group) {
 
 // TODO(gabe)
 func routerGabesShitTODO(g *echo.Group) {
-	g.GET("/gabe", controllerShillStockResults)
+	g.POST("/gabe", controllerShillStockResults)
 }
