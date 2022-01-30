@@ -8,6 +8,7 @@ import (
 
 func main() {
 	ctx := context.Background()
+	log.InfoStruct("Running svc")
 	if err := scraper.GetScraperSvc().RunTask(ctx); err != nil {
 		log.Error(err)
 	}
