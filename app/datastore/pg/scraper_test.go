@@ -32,6 +32,7 @@ var _ = Describe("Scraper", func() {
 					TransactionType: bo.Buy,
 					Shares:          1,
 					PricePerShare:   100.0,
+					Hash:            "asdfasdfadsaf",
 				},
 				{
 					PublicationDate: time.Now(),
@@ -41,13 +42,15 @@ var _ = Describe("Scraper", func() {
 					TransactionType: bo.Buy,
 					Shares:          20,
 					PricePerShare:   2000.0,
+					Hash:            "asdfasdfadsaf",
 				},
 			}
-			err := pg.GetScraperRepo().BulkInsert(context.Background(), trades)
+			ids, err := pg.GetScraperRepo().BulkInsert(context.Background(), trades)
 			Ω(err).ShouldNot(HaveOccurred())
+			Ω(ids).Should(HaveLen(1))
 			entries, err := pg.GetScraperRepo().GetTradesByShill(context.Background(), "BTS Jung Kook")
 			Ω(err).ShouldNot(HaveOccurred())
-			Ω(entries).Should(HaveLen(2))
+			Ω(entries).Should(HaveLen(1))
 		})
 	})
 })

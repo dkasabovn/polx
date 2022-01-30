@@ -6,7 +6,8 @@ CREATE TABLE trades (
     transaction_date DATE NOT NULL,
     transaction_type INT NOT NULL,
     shares INT NOT NULL,
-    price_per_share FLOAT NOT NULL
+    price_per_share FLOAT NOT NULL,
+    trade_hash TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE users (

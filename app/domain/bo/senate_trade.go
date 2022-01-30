@@ -18,6 +18,7 @@ type TradeEntry struct {
 	TransactionType TradeType
 	Shares          int
 	PricePerShare   float32
+	Hash            string
 }
 
 type Shill struct {

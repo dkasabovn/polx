@@ -84,30 +84,43 @@ func (s *scraperRepo) GetTradesByShill(ctx context.Context, shillName string) ([
 	return trades, nil
 }
 
-func (s *scraperRepo) BulkInsert(ctx context.Context, entries []bo.TradeEntry) error {
-
-	args := make([]interface{}, 7*len(entries))
+func (s *scraperRepo) BulkInsert(ctx context.Context, entries []bo.TradeEntry) ([]int, error) {
+	args := make([]interface{}, 8*len(entries))
 	valueStrings := make([]string, len(entries))
 
 	for k, v := range entries {
-		valueStrings[k] = fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d)", k*7+1, k*7+2, k*7+3, k*7+4, k*7+5, k*7+6, k*7+7)
-		args[k*7] = v.PublicationDate
-		args[k*7+1] = v.Name
-		args[k*7+2] = v.Ticker
-		args[k*7+3] = v.TransactionDate
-		args[k*7+4] = v.TransactionType
-		args[k*7+5] = v.Shares
-		args[k*7+6] = v.PricePerShare
+		valueStrings[k] = fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d)", k*8+1, k*8+2, k*8+3, k*8+4, k*8+5, k*8+6, k*8+7, k*8+8)
+		args[k*8] = v.PublicationDate
+		args[k*8+1] = v.Name
+		args[k*8+2] = v.Ticker
+		args[k*8+3] = v.TransactionDate
+		args[k*8+4] = v.TransactionType
+		args[k*8+5] = v.Shares
+		args[k*8+6] = v.PricePerShare
+		args[k*8+7] = v.Hash
 	}
 
-	statement := fmt.Sprintf("INSERT INTO trades (publication_date, shill_name, ticker, transaction_date, transaction_type, shares, price_per_share) VALUES %s", strings.Join(valueStrings, ", "))
+	statement := fmt.Sprintf("INSERT INTO trades (publication_date, shill_name, ticker, transaction_date, transaction_type, shares, price_per_share, trade_hash) VALUES %s ON CONFLICT DO NOTHING RETURNING id", strings.Join(valueStrings, ", "))
 
-	_, err := s.db.ExecContext(ctx, statement, args...)
+	rows, err := s.db.QueryContext(ctx, statement, args...)
 
 	if err != nil {
 		log.Error(err)
-		return err
+		return nil, err
 	}
 
-	return nil
+	var ids []int
+
+	for rows.Next() {
+		var id int
+		if err := rows.Scan(
+			&id,
+		); err != nil {
+			log.Error(err)
+			return nil, err
+		}
+		ids = append(ids, id)
+	}
+
+	return ids, nil
 }
