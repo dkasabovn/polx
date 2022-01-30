@@ -15,11 +15,6 @@ CREATE TABLE users (
     user_email TEXT NOT NULL
 );
 
-CREATE TABLE shills (
-    id SERIAL PRIMARY KEY,
-    shill_name TEXT NOT NULL UNIQUE
-)
-
 CREATE TABLE user_notifications (
     id SERIAL PRIMARY KEY,
     user_fk INT NOT NULL,
@@ -30,5 +25,3 @@ ALTER TABLE user_notifications
     ADD CONSTRAINT fk_user_notifs_user FOREIGN KEY (user_fk) REFERENCES users(id) ON DELETE CASCADE;
 
 CREATE INDEX index_trades_on_shill ON trades USING btree(shill_name);
-
-CREATE INDEX index_shills_on_shill ON shills USING btree(shill_name);
