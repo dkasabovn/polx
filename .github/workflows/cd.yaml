@@ -40,7 +40,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: calc sha
         id: calc_sha_push
-        if: ${{ github.event_name == 'push' }}
         run: |
           SHA_DATE=$(TZ=UTC git log --no-walk HEAD --format=%ad --date=iso-local | cut -c1-10 | tr '-' '_')
           SHORT_SHA=$(git log --no-walk HEAD --format=%h --abbrev=7)
