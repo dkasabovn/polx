@@ -106,10 +106,16 @@ func (a *analyticsService) GetShillTrades(ctx context.Context, shillName string)
 		arr := alpacaData[tick]
 		result.CurrentPrice = arr[len(arr) -1 ].ClosePrice
 		
-		result.SenatorValue = (result.SenatorSales - result.SenatorTotalSpent) + (result.CurrentPrice - result.SenatorAvgSharePrice) * result.Position
-		result.RetailValue  = (result.RetailSales  - result.RetailTotalSpent)  + (result.CurrentPrice - result.RetailAvgSharePrice)  * result.Position
+		// result.SenatorValue = (result.SenatorSales - result.SenatorTotalSpent) + (result.CurrentPrice - result.SenatorAvgSharePrice) * result.Position
+		// result.RetailValue  = (result.RetailSales  - result.RetailTotalSpent)  + (result.CurrentPrice - result.RetailAvgSharePrice)  * result.Position
+
+
+		result.SenatorValue = result.SenatorSales  + (result.CurrentPrice - result.SenatorAvgSharePrice) * result.Position
+		result.RetailValue  = result.RetailSales   + (result.CurrentPrice - result.RetailAvgSharePrice)  * result.Position
+		
 		
 		stockResults[tick] = result
+	
 	}
 
 	return stockResults, nil
