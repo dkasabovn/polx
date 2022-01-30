@@ -72,7 +72,7 @@ func assemblePostPayload(pageNum int) ([]byte, error) {
 	req := map[string]interface{}{
 		"congressType":    "Both",
 		"pageNumber":      pageNum,
-		"pageSize":        5,
+		"pageSize":        100,
 		"politicianParty": "Both",
 		"shareTypes":      []string{"Stock"},
 		"ticker":          false,
@@ -91,6 +91,7 @@ func (s *scraperSvc) fetchTradeEntries(ctx context.Context) ([]bo.TradeEntryRaw,
 
 	resp, err := http.Post("https://api.capitoltrades.com/trades", "application/json", bytes.NewBuffer(payload))
 	if err != nil {
+		log.InfoStruct(resp)
 		log.Error(err)
 		return nil, err
 	}
@@ -118,7 +119,7 @@ func (s *scraperSvc) fetchTradeEntries(ctx context.Context) ([]bo.TradeEntryRaw,
 func (s *scraperSvc) hashTradeEntries(entries []bo.TradeEntryRaw) ([]bo.TradeEntry, error) {
 	out := make([]bo.TradeEntry, len(entries))
 	for i, v := range entries {
-		stringified, err := json.Marshal(entries)
+		stringified, err := json.Marshal(v)
 		if err != nil {
 			log.Error(err)
 			return nil, err
@@ -129,14 +130,27 @@ func (s *scraperSvc) hashTradeEntries(entries []bo.TradeEntryRaw) ([]bo.TradeEnt
 
 		// TODO(dk): Fix dates here
 		entry := &bo.TradeEntry{
-			PublicationDate: time.Now(),
-			Name:            v.Name,
-			Ticker:          v.Ticker,
-			TransactionDate: time.Now(),
-			Shares:          int(v.Shares),
-			PricePerShare:   float32(v.Price),
-			Hash:            encoded,
+			Name:          v.Name,
+			Ticker:        v.Ticker,
+			Shares:        int(v.Shares),
+			PricePerShare: float32(v.Price),
+			Hash:          encoded,
 		}
+
+		parsedTrans, err := time.Parse("2006-01-02", v.TransactionDate)
+		if err != nil {
+			log.Error(err)
+			return nil, err
+		}
+
+		parsedPub, err := time.Parse("2006-01-02 15:04:05", v.PublicationDate[0:19])
+		if err != nil {
+			log.Error(err)
+			return nil, err
+		}
+
+		entry.PublicationDate = parsedPub
+		entry.TransactionDate = parsedTrans
 
 		if v.TradeType == "Sale" || v.TradeType == "Sale (Partial)" {
 			entry.TransactionType = bo.Sell
@@ -146,5 +160,6 @@ func (s *scraperSvc) hashTradeEntries(entries []bo.TradeEntryRaw) ([]bo.TradeEnt
 
 		out[i] = *entry
 	}
+
 	return out, nil
 }
