@@ -77,6 +77,20 @@ func (Run) ScraperDB() error {
 	return err
 }
 
+func (Build) ScraperDb() error {
+	return sh.RunV("docker", "build", "-t", "polx/scraperdb", "-f", "./db/Dockerfile", "./db/")
+}
+
+func (Build) AllProdImages() error {
+	mg.Deps(
+		Build.AllImages,
+		Build.Analytics,
+		Build.Scraper,
+		Build.ScraperDb,
+	)
+	return nil
+}
+
 func (Run) TheEntireApp() error {
 	mg.Deps(
 		Run.ScraperDB,
