@@ -1,0 +1,67 @@
+name: cd
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  cd_done:
+    runs-on: ubuntu-latest
+    needs:
+      - build_containers
+    steps:
+      - run: echo "all done"
+
+
+  build_containers:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    outputs:
+      sha_version_push: ${{ steps.calc_sha_push.outputs.sha_version }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Add .env
+        run: "echo $DOTENV > .env"
+        shell: bash
+        env:
+          DOTENV: ${{ secrets.DOT_ENV }}
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.17.6
+      - name: Login to GHCR
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: calc sha
+        id: calc_sha_push
+        run: |
+          SHA_DATE=$(TZ=UTC git log --no-walk HEAD --format=%ad --date=iso-local | cut -c1-10 | tr '-' '_')
+          SHORT_SHA=$(git log --no-walk HEAD --format=%h --abbrev=7)
+          SHA_VERSION="${SHA_DATE}_${SHORT_SHA}"
+          echo "SHA_VERSION: $SHA_VERSION"
+          echo "::set-output name=sha_version::$SHA_VERSION"
+      - name: install mage
+        run: go install github.com/magefile/mage@latest
+      - name: build all images
+        run: mage build:allProdImages
+      - name: push images
+        id: push_images
+        run: |
+          GHCR_ROOT=ghcr.io/${{ github.repository }}
+          SHA_VERSION=${{ steps.calc_sha_push.outputs.sha_version }}
+          echo "sha version"
+          echo $SHA_VERSION
+
+          docker tag polx/analytics $GHCR_ROOT/analytics:$SHA_VERSION
+          docker tag polx/scraper $GHCR_ROOT/scraper:$SHA_VERSION
+          docker tag polx/scraperdb $GHCR_ROOT/scraperdb:$SHA_VERSION
+
+          docker push $GHCR_ROOT/analytics:$SHA_VERSION
+          docker push $GHCR_ROOT/scraper:$SHA_VERSION
+          docker push $GHCR_ROOT/scraperdb:$SHA_VERSION

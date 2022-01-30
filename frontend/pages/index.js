@@ -5,7 +5,7 @@ import logo from "../public/logo.svg";
 
 export default function Home() {
   return (
-    <div className="w-screen min-h-screen flex items-center flex-col">
+    <div className="w-screen min-h-screen flex items-center flex-col topo">
       <div className="w-1/3 pt-20 flex flex-col">
         <Image src={logo}></Image>
         <div className="flex flex-row w-full justify-around pt-5">
