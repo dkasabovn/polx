@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - build_containers
-      - upload_to_ghcr
+    steps:
+      - run: echo "all done"
 
 
   build_containers:
