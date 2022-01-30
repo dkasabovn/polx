@@ -5,5 +5,5 @@ import (
 )
 
 type AlpacaRepo interface {
-	GetBars(ticker, startDate, endDate string ) (*bo.AlpacaResponse, error) 
+	GetBars(ticker, startDate string) (*bo.AlpacaResponse, error)
 }

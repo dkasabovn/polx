@@ -126,7 +126,7 @@ func (s *scraperRepo) BulkInsert(ctx context.Context, entries []bo.TradeEntry) (
 	return ids, nil
 }
 
-func (s *scraperRepo) GetShillsTickers(ctx context.Context, shillName string) ([]string, error){
+func (s *scraperRepo) GetShillsTickers(ctx context.Context, shillName string) ([]string, error) {
 	statement := "SELECT DISTINCT ticker FROM trades WHERE shill_name = $1"
 	res, err := s.db.QueryContext(ctx, statement, shillName)
 
@@ -145,29 +145,29 @@ func (s *scraperRepo) GetShillsTickers(ctx context.Context, shillName string) ([
 		tickers = append(tickers, tick)
 	}
 
-	return tickers, nil	
+	return tickers, nil
 
 }
 
-func (s *scraperRepo) GetShillsDates(ctx context.Context, shillName string) (time.Time, time.Time, error) {
-	statement := "SELECT min(transaction_date), max(transaction_date) FROM trades WHERE shill_name = $1"
+func (s *scraperRepo) GetShillsDates(ctx context.Context, shillName string) (time.Time, error) {
+	statement := "SELECT min(transaction_date) FROM trades WHERE shill_name = $1"
 	res, err := s.db.QueryContext(ctx, statement, shillName)
 
 	if err != nil {
 		log.Error(err)
-		return time.Time{}, time.Time{}, err
+		return time.Time{}, err
 	}
 
 	var min time.Time
-	var max time.Time
+	//var max time.Time
 	// var max time.Time
 	for res.Next() {
-		if err := res.Scan(&min, &max); err != nil {
+		if err := res.Scan(&min); err != nil {
 			log.Error(err)
-			return time.Time{}, time.Time{}, err
+			return time.Time{}, err
 		}
 	}
 	// fmt.Print(minTick)
 
-	return min, max,  nil	
+	return min, nil
 }

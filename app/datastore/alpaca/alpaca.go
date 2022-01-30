@@ -9,6 +9,7 @@ import (
 	"polx/app/domain/definition"
 	"polx/app/system/environment"
 	"sync"
+	"time"
 )
 
 var (
@@ -33,11 +34,8 @@ func GetAlpacaRepo() definition.AlpacaRepo {
 	return alpacaInst
 }
 
-func (a *alpacaRepo) GetBars(ticker, startDate, endDate string) (*bo.AlpacaResponse, error) {
-	url := fmt.Sprintf(baseUrl, ticker, startDate, endDate)
-	fmt.Println(startDate)
-	fmt.Println(endDate)
-	fmt.Println(url)
+func (a *alpacaRepo) GetBars(ticker, startDate string) (*bo.AlpacaResponse, error) {
+	url := fmt.Sprintf(baseUrl, ticker, startDate, time.Now().Add(-1*time.Hour).Format(time.RFC3339))
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -56,12 +54,11 @@ func (a *alpacaRepo) GetBars(ticker, startDate, endDate string) (*bo.AlpacaRespo
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(string(body))
+	//fmt.Println(string(body))
 
 	var trades bo.AlpacaResponse
 	json.Unmarshal(body, &trades)
-	fmt.Print(trades)
-	fmt.Print("END")
+	//fmt.Print(trades)
 
 	return &trades, nil
 }

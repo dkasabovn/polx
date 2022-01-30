@@ -48,8 +48,8 @@ func (s *scraperSvc) GetTradesByShill(ctx context.Context, shillName string) ([]
 	return s.scraperRepo.GetTradesByShill(ctx, shillName)
 }
 
-func (s *scraperSvc) RunTask(ctx context.Context) error {
-	entries, err := s.fetchTradeEntries(ctx)
+func (s *scraperSvc) RunTask(ctx context.Context, pageNum int) error {
+	entries, err := s.fetchTradeEntries(ctx, pageNum)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -86,8 +86,8 @@ func assemblePostPayload(pageNum int) ([]byte, error) {
 	return bytePayload, err
 }
 
-func (s *scraperSvc) fetchTradeEntries(ctx context.Context) ([]bo.TradeEntryRaw, error) {
-	payload, err := assemblePostPayload(1)
+func (s *scraperSvc) fetchTradeEntries(ctx context.Context, pageNum int) ([]bo.TradeEntryRaw, error) {
+	payload, err := assemblePostPayload(pageNum)
 	if err != nil {
 		log.Error(err)
 		return nil, err

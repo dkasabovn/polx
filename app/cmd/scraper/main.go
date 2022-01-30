@@ -8,7 +8,7 @@ import (
 
 func main() {
 	ctx := context.Background()
-	if err := scraper.GetScraperSvc().RunTask(ctx); err != nil {
+	if err := scraper.GetScraperSvc().RunTask(ctx, 1); err != nil {
 		log.Error(err)
 	}
 }

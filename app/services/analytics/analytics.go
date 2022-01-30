@@ -2,7 +2,6 @@ package analytics
 
 import (
 	"context"
-	"fmt"
 	"math"
 	"polx/app/datastore/alpaca"
 	"polx/app/datastore/pg"
@@ -46,18 +45,18 @@ func (a *analyticsService) GetShillTrades(ctx context.Context, shillName string)
 		return nil, err
 	}
 
-	startDate, endDate, err := a.tradeRepo.GetShillsDates(ctx, shillName)
+	startDate, err := a.tradeRepo.GetShillsDates(ctx, shillName)
 	if err != nil {
 		return nil, err
 	}
 
 	alpacaData := make(map[string][]bo.Bar)
 	for _, tick := range tickers {
-		data, err := a.alpacaRepo.GetBars(tick, startDate.Format(time.RFC3339), endDate.Format(time.RFC3339))
+		data, err := a.alpacaRepo.GetBars(tick, startDate.Format(time.RFC3339))
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println(data)
+		// fmt.Println(data)
 		alpacaData[tick] = data.Bars
 	}
 
@@ -71,15 +70,22 @@ func (a *analyticsService) GetShillTrades(ctx context.Context, shillName string)
 			currentStatus.StartDate = senatorTrade.TransactionDate
 		}
 
-		publicationIndex := int(senatorTrade.PublicationDate.Sub(startDate).Hours() / 24)
-		retailTrade := alpacaData[senatorTrade.Ticker][publicationIndex]
+		// publicationIndex := int(math.Min(senatorTrade.PublicationDate.Sub(startDate).Hours()/24, float64(alpacaDays-1)))
+		data := alpacaData[senatorTrade.Ticker]
+		lastDate := data[len(data)-1].Timestamp
+		publicationIndex := int(lastDate.Sub(senatorTrade.PublicationDate).Hours()/24) + 1
+		retailTrade := data[len(data)-publicationIndex]
 
 		if senatorTrade.TransactionType == bo.Buy {
-			currentStatus.SenatorAvgSharePrice = (currentStatus.Position*currentStatus.SenatorAvgSharePrice + senatorTrade.PricePerShare*float32(senatorTrade.Shares)) / (float32(senatorTrade.Shares) + currentStatus.Position)
+			if (float32(senatorTrade.Shares) + currentStatus.Position) != 0 {
+				currentStatus.SenatorAvgSharePrice = (currentStatus.Position*currentStatus.SenatorAvgSharePrice + senatorTrade.PricePerShare*float32(senatorTrade.Shares)) / (float32(senatorTrade.Shares) + currentStatus.Position)
+			}
 			currentStatus.Position += float32(senatorTrade.Shares)
 			currentStatus.SenatorTotalSpent += senatorTrade.PricePerShare * float32(senatorTrade.Shares)
 
-			currentStatus.RetailAvgSharePrice = (currentStatus.Position*currentStatus.RetailAvgSharePrice + retailTrade.ClosePrice*float32(senatorTrade.Shares)) / (float32(senatorTrade.Shares) + currentStatus.Position)
+			if (float32(senatorTrade.Shares) + currentStatus.Position) != 0 {
+				currentStatus.RetailAvgSharePrice = (currentStatus.Position*currentStatus.RetailAvgSharePrice + retailTrade.ClosePrice*float32(senatorTrade.Shares)) / (float32(senatorTrade.Shares) + currentStatus.Position)
+			}
 			currentStatus.Position += float32(senatorTrade.Shares)
 			currentStatus.RetailTotalSpent += retailTrade.ClosePrice * float32(senatorTrade.Shares)
 

@@ -1,6 +1,7 @@
 package analytics
 
 import (
+	"fmt"
 	"net/http"
 	"polx/app/domain/bo"
 	"polx/app/services/analytics"
@@ -31,21 +32,32 @@ func controllerShillStockResults(c echo.Context) error {
 	if err := c.Bind(shill); err != nil {
 		log.Error(err)
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-			"data": []string{},
+			"data":  []string{},
+			"error": "Binding Issue",
 		})
 	}
 
-	stockResults, err := analytics.GetAnalyticsService().GetShillTrades(c.Request().Context(), shill.Name )
+	stockResults, err := analytics.GetAnalyticsService().GetShillTrades(c.Request().Context(), shill.Name)
 	if err != nil {
 		log.Error(err)
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-			"data": []string{},
+			"data":  []string{},
+			"error": "None",
 		})
 	}
 
-	return c.JSON(http.StatusOK, map[string]interface{}{
+	fmt.Println("stockResults")
+
+	// fmt.Println(stockResults)
+	// var result []bo.StockResult
+	// for _, val := range stockResults {
+	// 	result = append(result, val)
+	// 	fmt.Println(result)
+	// }
+	fmt.Println(stockResults)
+
+	return c.JSON(http.StatusAccepted, map[string]interface{}{
 		"data": stockResults,
 	})
-
 
 }

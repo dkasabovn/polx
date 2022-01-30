@@ -4,6 +4,7 @@ package main
 
 import (
 	"os"
+	"polx/app/datastore/pg"
 
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
@@ -49,7 +50,7 @@ func (Run) Scraper() error {
 	)
 	sh.RunV("docker", "container", "stop", "polx_scraper")
 	sh.RunV("docker", "container", "rm", "polx_scraper")
-	return sh.RunV("docker", "run", "-d", "--name=polx_scraper", "--network=host", "polx/scraper")
+	return sh.RunV("docker", "run", "--name=polx_scraper", "--network=host", "polx/scraper")
 }
 
 func (Run) Analytics() error {
@@ -83,5 +84,14 @@ func (Run) TheEntireApp() error {
 		Run.Scraper,
 		Run.Analytics,
 	)
+	return nil
+}
+
+func ClearAll() error {
+	err := pg.ClearAll()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
