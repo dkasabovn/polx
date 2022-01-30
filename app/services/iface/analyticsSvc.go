@@ -6,5 +6,5 @@ import (
 )
 
 type AnalyticsService interface {
-	GetShillTrades(ctx context.Context, name string) (map[string]bo.StockResult, error)
+	GetShillTrades(ctx context.Context, name string) (map[string]bo.StockResult, int, error)
 }

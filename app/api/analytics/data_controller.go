@@ -37,7 +37,7 @@ func controllerShillStockResults(c echo.Context) error {
 		})
 	}
 
-	stockResults, err := analytics.GetAnalyticsService().GetShillTrades(c.Request().Context(), shill.Name)
+	stockResults, totalOrders, err := analytics.GetAnalyticsService().GetShillTrades(c.Request().Context(), shill.Name)
 	if err != nil {
 		log.Error(err)
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
@@ -47,7 +47,8 @@ func controllerShillStockResults(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusAccepted, map[string]interface{}{
-		"data": stockResults,
+		"data":        stockResults,
+		"totalOrders": totalOrders,
 	})
 
 }

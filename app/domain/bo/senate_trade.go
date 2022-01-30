@@ -42,21 +42,23 @@ type AlpacaResponse struct {
 }
 
 type StockResult struct {
-	Ticker   string  `json:"ticker"`
-	Position float32 `json:"position"`
-	ShareDelta float32 `json:"shareDelta"`
+	Ticker      string  `json:"ticker"`
+	Position    float32 `json:"position"`
+	ShareDelta  float32 `json:"shareDelta"`
+	PeakShares  float32 `json:"peakShares"`
+	TotalOrders float32 `json:"totalOrders"`
 
-	SenatorInitalPrice   float32 `json:"senatorIntitalPice"`
+	SenatorInitalPrice   float32 `json:"senatorInititalPrice"`
 	SenatorSales         float32 `json:"senatorSales"`
 	SenatorTotalSpent    float32 `json:"senatorTotalSpent"`
 	SenatorAvgSharePrice float32 `json:"senatorAvgSharePrice"`
-	SenatorValue 		float32 `json:"senatorValue"`
+	SenatorValue         float32 `json:"senatorValue"`
 
-	RetailInitalPrice   float32 `json:"retailInitioalPrive"`
+	RetailInitalPrice   float32 `json:"retailInitialPrice"`
 	RetailSales         float32 `json:"retailSales"`
 	RetailTotalSpent    float32 `json:"retailTotalSpent"`
 	RetailAvgSharePrice float32 `json:"retailAvgSharePrice"`
-	RetailValue 		float32 `json:"retailValue"`
+	RetailValue         float32 `json:"retailValue"`
 
 	CurrentPrice float32   `json:"currentPrice"`
 	StartDate    time.Time `json:"startDate"`

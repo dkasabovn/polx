@@ -32,9 +32,17 @@ export default function SenatorStats(props) {
 
 	const redOrGreen = (number) => {
 		if (number > 0) {
-			return <span className="text-green-500">{number}</span>;
+			return <span className="text-green-500">{number.toPrecision(4)}</span>;
 		} else {
-			return <span className="text-red-500">{number}</span>;
+			return <span className="text-red-500">{number.toPrecision(4)}</span>;
+		}
+	};
+
+  const redOrGreenPercent = (number) => {
+		if (number > 0) {
+			return <span className="text-green-500">{number.toPrecision(4)}</span>;
+		} else {
+			return <span className="text-red-500">{number.toPrecision(4)}</span>;
 		}
 	};
 
@@ -70,6 +78,8 @@ export default function SenatorStats(props) {
 		decodeURIComponent(name_encoded),
 		'base64'
 	).toString('ascii');
+
+  const orders = props.totalOrders
 
 	return (
 		<div className="w-screen min-h-screen flex items-center flex-col topo">
@@ -131,18 +141,28 @@ export default function SenatorStats(props) {
 										</div>
 										<div className="text-green-500 text-5xl font-bold">
 											{redOrGreen(
-												abs((obj.senatorValue / obj.retailValue) * 100)
+												obj.retailValue / obj.senatorValue * 100
 											)}
 										</div>
 									</div>
 									<div className="col-span-2 text-center shadow-xl px-5 py-5 rounded-lg bg-white">
 										<div className="text-left font-thin">
-											Buying in at the Same Time:{' '}
+											Percent of Portfolio:{' '}
 										</div>
 										<div className="text-green-500 text-5xl font-bold">
-											{redOrGreenMoney(
-												(obj.CurrentPrice - obj.SenatorInitialPrice) *
-													obj.Position
+											{redOrGreenPercent(
+												obj.totalOrders / orders * 100 
+											)}
+										</div>
+									</div>
+
+                  <div className="col-span-2 text-center shadow-xl px-5 py-5 rounded-lg bg-white">
+										<div className="text-left font-thin">
+											Peak Shares*:{' '}
+										</div>
+										<div className="text-green-500 text-5xl font-bold">
+											{redOrGreen(
+												obj.peakShares
 											)}
 										</div>
 									</div>

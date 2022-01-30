@@ -181,8 +181,6 @@ func (s *scraperRepo) GetShillsDates(ctx context.Context, shillName string) (tim
 	}
 
 	var min time.Time
-	//var max time.Time
-	// var max time.Time
 	for res.Next() {
 		if err := res.Scan(&min); err != nil {
 			log.Error(err)
