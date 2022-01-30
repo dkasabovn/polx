@@ -68,6 +68,10 @@ func (a *analyticsService) GetShillTrades(ctx context.Context, shillName string)
 			currentStatus = bo.StockResult{}
 			currentStatus.Ticker = senatorTrade.Ticker
 			currentStatus.StartDate = senatorTrade.TransactionDate
+			currentStatus.SenatorInitalPrice = senatorTrade.PricePerShare
+
+			index := int(senatorTrade.PublicationDate.Sub(startDate).Hours()/24)
+			currentStatus.RetailInitalPrice = alpacaData[senatorTrade.Ticker][index].ClosePrice
 		}
 
 		// publicationIndex := int(math.Min(senatorTrade.PublicationDate.Sub(startDate).Hours()/24, float64(alpacaDays-1)))
@@ -106,12 +110,12 @@ func (a *analyticsService) GetShillTrades(ctx context.Context, shillName string)
 		arr := alpacaData[tick]
 		result.CurrentPrice = arr[len(arr) -1 ].ClosePrice
 		
-		// result.SenatorValue = (result.SenatorSales - result.SenatorTotalSpent) + (result.CurrentPrice - result.SenatorAvgSharePrice) * result.Position
-		// result.RetailValue  = (result.RetailSales  - result.RetailTotalSpent)  + (result.CurrentPrice - result.RetailAvgSharePrice)  * result.Position
+		result.SenatorValue = (result.SenatorSales - result.SenatorTotalSpent) + (result.CurrentPrice - result.SenatorAvgSharePrice) * result.Position
+		result.RetailValue  = (result.RetailSales  - result.RetailTotalSpent)  + (result.CurrentPrice - result.RetailAvgSharePrice)  * result.Position
 
 
-		result.SenatorValue = result.SenatorSales  + (result.CurrentPrice - result.SenatorAvgSharePrice) * result.Position
-		result.RetailValue  = result.RetailSales   + (result.CurrentPrice - result.RetailAvgSharePrice)  * result.Position
+		// result.SenatorValue = result.SenatorSales  + (result.CurrentPrice - result.SenatorAvgSharePrice) * result.Position
+		// result.RetailValue  = result.RetailSales   + (result.CurrentPrice - result.RetailAvgSharePrice)  * result.Position
 		
 		
 		stockResults[tick] = result

@@ -46,12 +46,13 @@ type StockResult struct {
 	Position float32 `json:"position"`
 	ShareDelta float32 `json:"shareDelta"`
 
+	SenatorInitalPrice   float32 `json:"senatorIntitalPice"`
 	SenatorSales         float32 `json:"senatorSales"`
 	SenatorTotalSpent    float32 `json:"senatorTotalSpent"`
 	SenatorAvgSharePrice float32 `json:"senatorAvgSharePrice"`
 	SenatorValue 		float32 `json:"senatorValue"`
 
-
+	RetailInitalPrice   float32 `json:"retailInitioalPrive"`
 	RetailSales         float32 `json:"retailSales"`
 	RetailTotalSpent    float32 `json:"retailTotalSpent"`
 	RetailAvgSharePrice float32 `json:"retailAvgSharePrice"`
