@@ -3,6 +3,7 @@ module polx
 go 1.17
 
 require (
+	github.com/joho/godotenv v1.4.0
 	github.com/labstack/echo/v4 v4.6.3
 	github.com/lib/pq v1.10.4
 	github.com/magefile/mage v1.12.1
