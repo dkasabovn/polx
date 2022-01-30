@@ -2,6 +2,7 @@ package environment
 
 import (
 	"os"
+	"polx/app/system/log"
 
 	"github.com/joho/godotenv"
 )
@@ -15,6 +16,7 @@ func Init() {
 	err := godotenv.Load()
 
 	if err != nil {
+		log.Error(err)
 		panic("could not load env variables")
 	}
 

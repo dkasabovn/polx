@@ -14,5 +14,6 @@ COPY go.mod go.sum ./
 COPY db db
 COPY build build
 COPY app app
+COPY .env .env
 
 RUN go build -o=/go/bin ./app/cmd/...

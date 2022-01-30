@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"polx/app/domain/bo"
 	"polx/app/domain/definition"
+	"polx/app/system/environment"
 	"sync"
 )
 
@@ -32,19 +33,21 @@ func GetAlpacaRepo() definition.AlpacaRepo {
 	return alpacaInst
 }
 
-func (a *alpacaRepo) GetBars(ticker, startDate, endDate string ) (*bo.AlpacaResponse, error) {
+func (a *alpacaRepo) GetBars(ticker, startDate, endDate string) (*bo.AlpacaResponse, error) {
 	url := fmt.Sprintf(baseUrl, ticker, startDate, endDate)
+	fmt.Println(startDate)
+	fmt.Println(endDate)
+	fmt.Println(url)
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-
-	request.Header.Set(		"APCA-API-KEY-ID" , "PKU0STVX1YQ9PG1OUKV3")
-	request.Header.Set(		"APCA-API-SECRET-KEY" , "pAbAmL0OxCIEpkmRDWVg2f0G0gzrWeXwpwscNBX3")
+	request.Header.Set("APCA-API-KEY-ID", environment.ALPACA_KEY)
+	request.Header.Set("APCA-API-SECRET-KEY", environment.ALPACA_SECRET)
 
 	resp, err := a.client.Do(request)
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 
@@ -53,10 +56,11 @@ func (a *alpacaRepo) GetBars(ticker, startDate, endDate string ) (*bo.AlpacaResp
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println(string(body))
 
 	var trades bo.AlpacaResponse
-	json.Unmarshal(body, &trades);
-	fmt.Print(trades.Bars)
+	json.Unmarshal(body, &trades)
+	fmt.Print(trades)
 	fmt.Print("END")
 
 	return &trades, nil
