@@ -31,6 +31,28 @@ func GetScraperRepo() definition.ScraperRepo {
 	return scraperInst
 }
 
+func (s *scraperRepo) GetShillsAll(ctx context.Context) ([]string, error) {
+	statement := "SELECT DISTINCT shill_name FROM trades LIMIT 100"
+	res, err := s.db.QueryContext(ctx, statement)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	var shills []string
+	for res.Next() {
+		var shill string
+		if err := res.Scan(
+			&shill,
+		); err != nil {
+			log.Error(err)
+			return nil, err
+		}
+		shills = append(shills, shill)
+	}
+	return shills, nil
+}
+
 func (s *scraperRepo) GetShills(ctx context.Context, query string) ([]bo.Shill, error) {
 	statement := "SELECT DISTINCT shill_name FROM trades WHERE shill_name LIKE $1 LIMIT 10"
 	res, err := s.db.QueryContext(ctx, statement, fmt.Sprintf("%%%s%%", query))

@@ -36,6 +36,10 @@ func GetScraperSvc() iface.ScraperSvc {
 	return scraperSvcInst
 }
 
+func (s *scraperSvc) GetShillsAll(ctx context.Context) ([]string, error) {
+	return s.scraperRepo.GetShillsAll(ctx)
+}
+
 func (s *scraperSvc) GetShills(ctx context.Context, query string) ([]bo.Shill, error) {
 	return s.scraperRepo.GetShills(ctx, query)
 }

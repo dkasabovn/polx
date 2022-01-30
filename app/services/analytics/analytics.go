@@ -70,8 +70,8 @@ func (a *analyticsService) GetShillTrades(ctx context.Context, shillName string)
 			currentStatus.StartDate = senatorTrade.TransactionDate
 			currentStatus.SenatorInitalPrice = senatorTrade.PricePerShare
 
-			index := int(senatorTrade.PublicationDate.Sub(startDate).Hours()/24)
-			currentStatus.RetailInitalPrice = alpacaData[senatorTrade.Ticker][index].ClosePrice
+			index := math.Min(float64(senatorTrade.PublicationDate.Sub(startDate).Hours()/24), float64(len(alpacaData[senatorTrade.Ticker])-1))
+			currentStatus.RetailInitalPrice = alpacaData[senatorTrade.Ticker][int(math.Max(0.0, index))].ClosePrice
 		}
 
 		// publicationIndex := int(math.Min(senatorTrade.PublicationDate.Sub(startDate).Hours()/24, float64(alpacaDays-1)))
@@ -108,18 +108,16 @@ func (a *analyticsService) GetShillTrades(ctx context.Context, shillName string)
 
 	for tick, result := range stockResults {
 		arr := alpacaData[tick]
-		result.CurrentPrice = arr[len(arr) -1 ].ClosePrice
-		
-		result.SenatorValue = (result.SenatorSales - result.SenatorTotalSpent) + (result.CurrentPrice - result.SenatorAvgSharePrice) * result.Position
-		result.RetailValue  = (result.RetailSales  - result.RetailTotalSpent)  + (result.CurrentPrice - result.RetailAvgSharePrice)  * result.Position
+		result.CurrentPrice = arr[len(arr)-1].ClosePrice
 
+		result.SenatorValue = (result.SenatorSales - result.SenatorTotalSpent) + (result.CurrentPrice-result.SenatorAvgSharePrice)*result.Position
+		result.RetailValue = (result.RetailSales - result.RetailTotalSpent) + (result.CurrentPrice-result.RetailAvgSharePrice)*result.Position
 
 		// result.SenatorValue = result.SenatorSales  + (result.CurrentPrice - result.SenatorAvgSharePrice) * result.Position
 		// result.RetailValue  = result.RetailSales   + (result.CurrentPrice - result.RetailAvgSharePrice)  * result.Position
-		
-		
+
 		stockResults[tick] = result
-	
+
 	}
 
 	return stockResults, nil

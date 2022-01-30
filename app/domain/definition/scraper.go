@@ -12,4 +12,5 @@ type ScraperRepo interface {
 	GetShillsTickers(ctx context.Context, shillName string) ([]string, error)
 	GetShillsDates(ctx context.Context, shillName string) (time.Time, error)
 	GetShills(ctx context.Context, query string) ([]bo.Shill, error)
+	GetShillsAll(ctx context.Context) ([]string, error)
 }

@@ -1,7 +1,7 @@
 package analytics
 
 import (
-	"fmt"
+	"context"
 	"net/http"
 	"polx/app/domain/bo"
 	"polx/app/services/analytics"
@@ -46,18 +46,21 @@ func controllerShillStockResults(c echo.Context) error {
 		})
 	}
 
-	fmt.Println("stockResults")
-
-	// fmt.Println(stockResults)
-	// var result []bo.StockResult
-	// for _, val := range stockResults {
-	// 	result = append(result, val)
-	// 	fmt.Println(result)
-	// }
-	fmt.Println(stockResults)
-
 	return c.JSON(http.StatusAccepted, map[string]interface{}{
 		"data": stockResults,
 	})
 
+}
+
+func controllerAllShills(c echo.Context) error {
+	shills, err := scraper.GetScraperSvc().GetShillsAll(context.Background())
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"data": []string{},
+		})
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"data": shills,
+	})
 }
