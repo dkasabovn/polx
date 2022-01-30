@@ -59,7 +59,7 @@ func (Run) Analytics() error {
 	)
 	sh.RunV("docker", "container", "stop", "polx_analytics")
 	sh.RunV("docker", "container", "rm", "polx_analytics")
-	return sh.RunV("docker", "run", "-p", "6969:6969", "-d", "--name=polx_analytics", "--network=host", "polx/analytics")
+	return sh.RunV("docker", "run", "-p", "127.0.0.1:6969:6969", "-d", "--network=host", "--name=polx_analytics", "polx/analytics")
 }
 
 func (Run) ScraperDB() error {

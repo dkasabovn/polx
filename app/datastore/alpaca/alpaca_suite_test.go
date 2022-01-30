@@ -1,4 +1,4 @@
-package pg_test
+package alpaca_test
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestPg(t *testing.T) {
+func TestAlpaca(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Pg Suite")
+	RunSpecs(t, "Alpaca Suite")
 }

@@ -8,6 +8,7 @@ func addDataRoutes(e *echo.Echo) {
 	g := e.Group("/shills")
 
 	routerShillAutocomplete(g)
+	routerGabesShitTODO(g)
 }
 
 func routerShillAutocomplete(g *echo.Group) {
@@ -16,7 +17,5 @@ func routerShillAutocomplete(g *echo.Group) {
 
 // TODO(gabe)
 func routerGabesShitTODO(g *echo.Group) {
-	g.GET("/gabe", func(c echo.Context) error {
-		return nil
-	})
+	g.GET("/gabe", controllerShillStockResults)
 }

@@ -10,6 +10,7 @@ import (
 	"polx/app/system/log"
 	"strings"
 	"sync"
+	"time"
 )
 
 var (
@@ -123,4 +124,50 @@ func (s *scraperRepo) BulkInsert(ctx context.Context, entries []bo.TradeEntry) (
 	}
 
 	return ids, nil
+}
+
+func (s *scraperRepo) GetShillsTickers(ctx context.Context, shillName string) ([]string, error){
+	statement := "SELECT DISTINCT ticker FROM trades WHERE shill_name = $1"
+	res, err := s.db.QueryContext(ctx, statement, shillName)
+
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	var tickers []string
+	for res.Next() {
+		var tick string
+		if err := res.Scan(&tick); err != nil {
+			log.Error(err)
+			return nil, err
+		}
+		tickers = append(tickers, tick)
+	}
+
+	return tickers, nil	
+
+}
+
+func (s *scraperRepo) GetShillsDates(ctx context.Context, shillName string) (time.Time, time.Time, error) {
+	statement := "SELECT min(transaction_date), max(transaction_date) FROM trades WHERE shill_name = $1"
+	res, err := s.db.QueryContext(ctx, statement, shillName)
+
+	if err != nil {
+		log.Error(err)
+		return time.Time{}, time.Time{}, err
+	}
+
+	var min time.Time
+	var max time.Time
+	// var max time.Time
+	for res.Next() {
+		if err := res.Scan(&min, &max); err != nil {
+			log.Error(err)
+			return time.Time{}, time.Time{}, err
+		}
+	}
+	// fmt.Print(minTick)
+
+	return min, max,  nil	
 }
