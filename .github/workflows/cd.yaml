@@ -56,6 +56,8 @@ jobs:
         run: |
           GHCR_ROOT=ghcr.io/${{ github.repository }}
           SHA_VERSION=${{ steps.calc_sha_push.outputs.sha_version }}
+          echo "sha version"
+          echo $SHA_VERSION
 
           docker tag polx/analytics $GHCR_ROOT/analytics:$SHA_VERSION
           docker tag polx/scraper $GHCR_ROOT/scraper:$SHA_VERSION
