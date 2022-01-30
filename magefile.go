@@ -43,14 +43,20 @@ func (Build) Analytics() error {
 }
 
 func (Run) Scraper() error {
-	mg.Deps(Build.Scraper)
+	mg.Deps(
+		Build.AllImages,
+		Build.Scraper,
+	)
 	sh.RunV("docker", "container", "stop", "polx_scraper")
 	sh.RunV("docker", "container", "rm", "polx_scraper")
 	return sh.RunV("docker", "run", "-d", "--name=polx_scraper", "--network=host", "polx/scraper")
 }
 
 func (Run) Analytics() error {
-	mg.Deps(Build.Analytics)
+	mg.Deps(
+		Build.AllImages,
+		Build.Analytics,
+	)
 	sh.RunV("docker", "container", "stop", "polx_analytics")
 	sh.RunV("docker", "container", "rm", "polx_analytics")
 	return sh.RunV("docker", "run", "-p", "6969:6969", "-d", "--name=polx_analytics", "--network=host", "polx/analytics")
