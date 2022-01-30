@@ -12,15 +12,25 @@ export default function Autocomplete() {
             clearTimeout(debounce)
         }
 
-        setDebounce(setTimeout(() => {
+        setDebounce(setTimeout(async () => {
             // TODO(dk): call api
-        }, 500))
+            fetch(`/api/autocomplete?value=${text}`).then((x) => {
+                x.json().then((opts) => {
+                    if (opts.data) {
+                        const res_data = opts.data.map((x) => {
+                            return x.name
+                        })
+                        setOptions([...res_data])
+                    }
+                }).catch((_) => {})
+            }).catch((_) => {})
+        }, 100))
     }
 
     return (
         <div className="w-full flex-col">
             <input className="border-2 py-2 px-3 w-full" type="text" onInput={onType} value={text}></input>
-            { options.length > 0 && <div className="relative shadow-md w-full">
+            { options.length > 0 && text != "" && <div className="relative shadow-md w-full">
             {
                 options.map((opt, index) => (
                     <div className="py-1 px-3 cursor-pointer hover:bg-gray-300" key={index} onClick={(e) => {

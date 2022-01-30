@@ -36,6 +36,10 @@ func GetScraperSvc() iface.ScraperSvc {
 	return scraperSvcInst
 }
 
+func (s *scraperSvc) GetShills(ctx context.Context, query string) ([]bo.Shill, error) {
+	return s.scraperRepo.GetShills(ctx, query)
+}
+
 func (s *scraperSvc) BulkInsert(ctx context.Context, entries []bo.TradeEntry) ([]int, error) {
 	return s.scraperRepo.BulkInsert(ctx, entries)
 }

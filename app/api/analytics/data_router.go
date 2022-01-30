@@ -11,7 +11,7 @@ func addDataRoutes(e *echo.Echo) {
 }
 
 func routerShillAutocomplete(g *echo.Group) {
-	g.GET("/autocomplete", func(c echo.Context) error { return nil })
+	g.GET("/autocomplete", controllerShillAutocomplete)
 }
 
 // TODO(gabe)

@@ -1,0 +1,18 @@
+# keep the golang version in sync with the .tool-version file
+FROM golang:1.17.6 as builder
+
+ENV CGO_ENABLED=0
+ENV GOOS=linux
+
+RUN update-ca-certificates
+RUN useradd -u 10001 scratchuser
+
+WORKDIR /kronologic-services
+
+COPY vendor vendor
+COPY go.mod go.sum ./
+COPY db db
+COPY build build
+COPY app app
+
+RUN go build -o=/go/bin ./app/cmd/...

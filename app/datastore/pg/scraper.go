@@ -31,8 +31,8 @@ func GetScraperRepo() definition.ScraperRepo {
 }
 
 func (s *scraperRepo) GetShills(ctx context.Context, query string) ([]bo.Shill, error) {
-	statement := "SELECT shill_name FROM trades WHERE shill_name LIKE '$1%' LIMIT 5"
-	res, err := s.db.QueryContext(ctx, statement, query)
+	statement := "SELECT DISTINCT shill_name FROM trades WHERE shill_name LIKE $1 LIMIT 10"
+	res, err := s.db.QueryContext(ctx, statement, fmt.Sprintf("%%%s%%", query))
 
 	if err != nil {
 		log.Error(err)
